@@ -10,9 +10,13 @@ from PIL import Image, ImageOps
 from torchvision import transforms
 import io
 from detection_infer import detect
+import torch
+
+# Check if CUDA is available
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model_path ='checkpoint_epoch_350.pth'
-checkpoint = torch.load(model_path)
+checkpoint = torch.load(model_path, map_location=device)
 
 
 # Assuming 'model' is your model instance
