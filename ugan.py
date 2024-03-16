@@ -15,6 +15,8 @@ from tqdm import tqdm
 from tensorboardX import SummaryWriter
 from accelerate import notebook_launcher
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 accelerator = Accelerator()
 device = accelerator.device
@@ -186,7 +188,7 @@ def tensor2img(one_tensor):# [b,c,h,w] [-1,1]
     img = np.transpose(img,(1,2,0))
     return img
 def img2tensor(np_img):# [h,w,c]
-    tensor = get_transforms()(np_img).cuda() # [c,h,w] [-1,1]
+    tensor = get_transforms()(np_img).to(device) # [c,h,w] [-1,1]
     tensor = tensor.unsqueeze(0) # [b,c,h,w] [-1,1]
     return tensor
 
@@ -231,7 +233,7 @@ def calculate_x_gradient(images):
             [[0, 0, 0], [-1, 0, 1], [0, 0, 0]],
             [[0, 0, 0], [-1, 0, 1], [0, 0, 0]],
         ]
-    ).cuda()
+    ).to(device)
     x_gradient_filter = x_gradient_filter.view(3, 1, 3, 3)
     result = torch.functional.F.conv2d(
         images, x_gradient_filter, groups=3, padding=(1, 1)
@@ -248,7 +250,7 @@ def calculate_y_gradient(images):
             [[0, 1, 0], [0, 0, 0], [0, -1, 0]],
             [[0, 1, 0], [0, 0, 0], [0, -1, 0]],
         ]
-    ).cuda()
+    ).to(device)
     y_gradient_filter = y_gradient_filter.view(3, 1, 3, 3)
     result = torch.functional.F.conv2d(
         images, y_gradient_filter, groups=3, padding=(1, 1)
