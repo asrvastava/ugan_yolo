@@ -11,7 +11,7 @@ labels = ['Mask', 'can', 'cellphone', 'electronics', 'gbottle', 'glove', 'metal'
 
 garbage = []
 def detect(image):
-    model = YOLO("C:/Users/hp/Desktop/final/70epoch.pt")
+    model = YOLO("70epoch.pt")
     results = model(image)
     class_list = []
     for result in results:
